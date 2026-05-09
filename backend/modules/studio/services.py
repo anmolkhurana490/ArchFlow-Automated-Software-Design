@@ -3,8 +3,9 @@ from services.websocket import WebSocketManager
 from modules.studio.dao import StudioDao
 from modules.studio.models import StageUpdate
 from config.constants import MAX_SESSIONS_PER_PROJECT
-from config.errors import NotFoundException, BadRequestException, UnprocessableEntityException
-from modules.studio.types import UserCheckpointData
+from config.errors import NotFoundException, UnprocessableEntityException
+from modules.studio.types import UserCheckpointData, ExportFormat
+from utils.file_utils import generate_text_file, generate_pdf_file
 from typing import AsyncGenerator
 import asyncio
 
@@ -105,6 +106,28 @@ class StudioService:
 			await self.ws_manager.broadcast_data(project_id, update)
 			# print(f"Sent update to WebSocket for session {session_id}: {update}")
 
+
+	async def export_report(self, project_id: str, session_id: str, format: ExportFormat):
+		session_data = await self.studio_dao.get_session_by_id(session_id)
+
+		if not session_data:
+			raise NotFoundException(f"Session not found")
+		
+		final_report: str = session_data.output.output.get("final_output_report", "")
+
+		if not final_report:
+			raise UnprocessableEntityException(f"Report not available for this session")
+
+		# Generate the report content based on the session data and requested format
+		if format == "md":
+			file_io = generate_text_file(final_report)
+		else:
+			file_io = generate_pdf_file(final_report)
+
+		filename = f"report_{session_id}.{format}"
+		media_type = "text/markdown" if format == "md" else "application/pdf"
+
+		return file_io, filename, media_type
 
 	# Websocket connection management methods
 	async def connect_websocket(self, websocket, session_id: str):

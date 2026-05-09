@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Literal
 from config.errors import BadRequestException
 from modules.studio.models import StageName, StageStatus
 from bson import ObjectId
@@ -18,3 +18,6 @@ class AgentStartData(BaseModel):
 class UserCheckpointData(BaseModel):
   stage: StageName
   response: Dict[str, Any] = Field(default_factory=dict)
+
+# Define export format options
+ExportFormat = Literal["md", "pdf"]

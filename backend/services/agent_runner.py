@@ -33,7 +33,7 @@ class AgentRunner:
         
         return stream
     
-    # 
+    # To process the agent updates stream and yield structured updates for frontend and DB consumption
     async def stream_agent_update(self, stream: AsyncIterator):
         try:
             async for step in stream:

@@ -6,6 +6,7 @@ from agent.orchestration.design import design_stage
 from agent.orchestration.validation import validation_stage
 from agent.orchestration.output import output_stage
 from langgraph.checkpoint.memory import MemorySaver
+from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
 
 # ========== Main Graph Construction ==========
 main_graph = StateGraph(GlobalState)
@@ -23,4 +24,6 @@ main_graph.add_edge("Design", "Validation")
 main_graph.add_edge("Validation", "Output")
 main_graph.add_edge("Output", END)
 
-main_agent = main_graph.compile(checkpointer=MemorySaver())
+serializer = JsonPlusSerializer(allowed_msgpack_modules=True)
+
+main_agent = main_graph.compile(checkpointer=MemorySaver(serde=serializer))

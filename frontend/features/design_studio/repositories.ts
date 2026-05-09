@@ -29,6 +29,12 @@ export async function checkpointStudio(projectId: string, sessionId: string, res
   return res.data ?? res;
 }
 
+export async function exportOutputReportFile(projectId: string, sessionId: string, format: "md" | "pdf") {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  const res = await apiClient.get(`/studio/${projectId}/export/${sessionId}/${format}`, { responseType: "blob" });
+  return res.data ?? res;
+}
+
 // Lightweight WebSocket wrapper to receive ProcessingEvent objects from backend
 class StudioWebSocket {
   private native: NativeSocket;

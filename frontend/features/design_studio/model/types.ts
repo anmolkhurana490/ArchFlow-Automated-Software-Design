@@ -133,4 +133,7 @@ export interface DesignStudioViewModel {
   currentSessionId: string | null;
   selectSession: (sessionId: string | null) => Promise<void>;
   reloadSessions: () => Promise<void>;
+
+  exportMarkdown: () => void;
+  exportPDF: () => void;
 }

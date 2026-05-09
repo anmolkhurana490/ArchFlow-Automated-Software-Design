@@ -29,7 +29,7 @@ function PlanningStageContent() {
   } = useDesignStudioViewModel(projectId);
 
   const {
-    architecture, techStack,
+    architecture, tech_stack,
     checkpoint_details, response, user_answered
   } = planning;
 
@@ -71,7 +71,7 @@ function PlanningStageContent() {
 
         <div>
           <p className="font-semibold">Tech Stack</p>
-          <StructuredOutputRenderer output={techStack} />
+          <StructuredOutputRenderer output={tech_stack} />
         </div>
       </div>
     </div>

@@ -54,7 +54,7 @@ export interface TechStackNodeOutput {
 
 export interface PlanningStageState {
   architecture?: ArchitectureNodeDetails;
-  techStack?: TechStackNodeDetails;
+  tech_stack?: TechStackNodeDetails;
   checkpoint_details?: Question[];
   response?: Record<string, string>;
   user_answered?: boolean;

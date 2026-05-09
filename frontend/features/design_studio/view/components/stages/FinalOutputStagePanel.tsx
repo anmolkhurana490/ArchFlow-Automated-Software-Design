@@ -6,18 +6,26 @@ import { useShallow } from "zustand/react/shallow";
 import type { StageStatus } from "../../../model/types";
 import { StagePanelFrame } from "./StagePanelFrame";
 import Markdown from "react-markdown";
+import { useParams } from "next/navigation";
 
 interface FinalOutputStagePanelProps {
   status: StageStatus;
 }
 
 function FinalOutputStageContent() {
+  const params = useParams();
+  const projectId = params.id as string;
+
   const { validation, finalOutput } = useDesignStudioStore(
     useShallow((state) => ({
       validation: state.validation,
       finalOutput: state.output,
     })),
   );
+
+  const {
+    exportMarkdown, exportPDF
+  } = useDesignStudioViewModel(projectId);
 
   if (!finalOutput) {
     return (
@@ -27,6 +35,23 @@ function FinalOutputStageContent() {
 
   return (
     <div className="space-y-4">
+      {finalOutput && <div className="flex items-center justify-end gap-2">
+        <button
+          type="button"
+          onClick={exportMarkdown}
+          className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1 text-sm font-medium text-slate-200 hover:border-cyan-400"
+        >
+          Export Markdown
+        </button>
+        <button
+          type="button"
+          onClick={exportPDF}
+          className="rounded-md border border-slate-600 bg-cyan-700 px-3 py-1 text-sm font-medium text-white hover:bg-cyan-600"
+        >
+          Export PDF
+        </button>
+      </div>}
+
       {validation?.final_score && <p className="text-sm text-slate-300">
         Final output compiled after validation confidence {Math.round(validation.final_score * 100)}/100.
       </p>}

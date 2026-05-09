@@ -1,5 +1,6 @@
 from fastapi import APIRouter, WebSocket, Depends
-from modules.studio.types import AgentStartData, UserCheckpointData
+from fastapi.responses import StreamingResponse
+from modules.studio.types import AgentStartData, UserCheckpointData, ExportFormat
 from modules.projects.dependencies import validate_project
 from modules.studio.services import StudioService
 
@@ -42,7 +43,16 @@ async def checkpoint_studio(project_id: str, session_id: str, data: UserCheckpoi
 # def edit_studio(project_id: str, session_id: str data: UserInputData):
   # result = studio_service.edit_agent(project_id, session_id: str data.user_input)
 #   return result
-  
+
+
+@router.get("/{project_id}/export/{session_id}/{format}")
+async def export_report(project_id: str, session_id: str, format: ExportFormat):
+  file_io, filename, media_type = await studio_service.export_report(project_id, session_id, format)
+
+  return StreamingResponse(
+    file_io, media_type=media_type,
+    headers={"Content-Disposition": f"attachment; filename={filename}"}
+  )
 
 # Websocket endpoint to stream real-time updates of the agent execution for a given project ID
 @router.websocket("/ws/{project_id}")

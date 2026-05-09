@@ -31,7 +31,7 @@ function ValidationStageContent() {
     <div className="space-y-8">
       {reqAlignReport && <div className="space-y-4">
         <p className="text-lg font-black text-emerald-300">
-          Confidence: {Math.round(reqAlignReport.confidence * 100)}/100
+          Requirements Alignment Validation Confidence: {Math.round(reqAlignReport.confidence * 100)}/100
         </p>
 
         <ul className="list-disc space-y-1 pl-5">

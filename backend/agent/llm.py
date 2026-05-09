@@ -16,9 +16,10 @@ def call_llm(prompt: str):
   return response.content
 
 def call_structured_llm(StrcuturedOutputSchema: type[BaseModel], prompt: str) -> dict:
-  result = generate_mock(StrcuturedOutputSchema)
-  # structured_llm = llm.with_structured_output(StrcuturedOutputSchema)
-  # result = structured_llm.invoke(prompt)
+  # result = generate_mock(StrcuturedOutputSchema)
+  
+  structured_llm = llm.with_structured_output(StrcuturedOutputSchema)
+  result = structured_llm.invoke(prompt)
 
   if result is None:
     return {}

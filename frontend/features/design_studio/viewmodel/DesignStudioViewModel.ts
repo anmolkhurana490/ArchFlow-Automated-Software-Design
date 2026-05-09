@@ -3,7 +3,7 @@
 import { useCallback, useEffect } from "react";
 import type { DesignStudioViewModel } from "../model/types";
 import { useDesignStudioStore } from "./DesignStudioStore";
-import { checkpointStudio, getProjectSessions, getSession, startStudio, studioSocket } from "../repositories";
+import { checkpointStudio, exportOutputReportFile, getProjectSessions, getSession, startStudio, studioSocket } from "../repositories";
 
 export function useDesignStudioViewModel(projectId: string): DesignStudioViewModel {
   const initializeProject = async () => {
@@ -235,6 +235,30 @@ export function useDesignStudioViewModel(projectId: string): DesignStudioViewMod
     store.resetSession();
   }, [projectId]);
 
+  // Helper function to trigger download of a Blob object as a file
+  const downloadBlob = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportMarkdown = useCallback(async () => {
+    const store = useDesignStudioStore.getState();
+    if (!projectId || !store.currentSessionId || !store.output) return;
+    const blob = await exportOutputReportFile(projectId, store.currentSessionId, "md");
+    downloadBlob(blob, "design_report.md");
+  }, [projectId]);
+
+  const exportPDF = useCallback(async () => {
+    const store = useDesignStudioStore.getState();
+    if (!projectId || !store.currentSessionId || !store.output) return;
+    const blob = await exportOutputReportFile(projectId, store.currentSessionId, "pdf");
+    downloadBlob(blob, "design_report.pdf");
+  }, [projectId]);
+
   return {
     initializeProject,
     runProcessing,
@@ -244,5 +268,7 @@ export function useDesignStudioViewModel(projectId: string): DesignStudioViewMod
     currentSessionId: useDesignStudioStore.getState().currentSessionId,
     selectSession,
     reloadSessions,
+    exportMarkdown,
+    exportPDF,
   };
 }
