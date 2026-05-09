@@ -1,3 +1,5 @@
+import { StageMeta } from "./types";
+
 export const STAGE_METADATA = [
   {
     title: "Elicitation",
@@ -22,4 +24,4 @@ export const STAGE_METADATA = [
     title: "Output",
     description: "Compile all stage outputs into a final architecture decision document.",
   },
-] as const;
+] as StageMeta[];
