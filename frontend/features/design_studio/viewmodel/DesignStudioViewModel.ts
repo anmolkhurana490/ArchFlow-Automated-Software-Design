@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import type { DesignStudioViewModel } from "../model/types";
+import type { DesignStudioViewModel, ProcessingEvent } from "../model/types";
 import { useDesignStudioStore } from "./DesignStudioStore";
 import { checkpointStudio, exportOutputReportFile, getProjectSessions, getSession, startStudio, studioSocket } from "../repositories";
+import { toast } from "sonner";
 
 export function useDesignStudioViewModel(projectId: string): DesignStudioViewModel {
   const initializeProject = async () => {
@@ -24,6 +25,7 @@ export function useDesignStudioViewModel(projectId: string): DesignStudioViewMod
         await store.setSessionData(session);
       }
     } catch (error: any) {
+      toast.error("Failed to load project sessions");
       console.error("Failed to load project sessions", error?.message ?? error);
     }
   };
@@ -41,7 +43,7 @@ export function useDesignStudioViewModel(projectId: string): DesignStudioViewMod
     });
 
     studioSocket.onOpen = () => console.log("WebSocket connection established.");
-    studioSocket.onEvent = (event) => useDesignStudioStore.getState().updateFromEvent(event);
+    studioSocket.onEvent = (event) => handleAgentUpdates(event);
     studioSocket.onClose = () => {
       console.warn("WebSocket connection closed unexpectedly.");
       useDesignStudioStore.getState().setGlobalState({
@@ -73,6 +75,8 @@ export function useDesignStudioViewModel(projectId: string): DesignStudioViewMod
         liveStage: null,
         liveActivity: null,
       });
+
+      toast.error("Unable to start design agent. Please retry.");
       store.setStageError("elicitation", "Unable to start pipeline. Please retry.");
       console.error("Failed to start design studio pipeline", error?.message ?? error);
     }
@@ -141,7 +145,7 @@ export function useDesignStudioViewModel(projectId: string): DesignStudioViewMod
     });
 
     studioSocket.onOpen = () => console.log("WebSocket connection established.");
-    studioSocket.onEvent = (event) => useDesignStudioStore.getState().updateFromEvent(event);
+    studioSocket.onEvent = (event) => handleAgentUpdates(event);
     studioSocket.onClose = () => {
       console.warn("WebSocket connection closed unexpectedly.");
       useDesignStudioStore.getState().setGlobalState({
@@ -175,10 +179,32 @@ export function useDesignStudioViewModel(projectId: string): DesignStudioViewMod
         isProcessing: false,
         liveActivity: null,
       });
+
+      toast.error(`Unable to continue. Please retry.`);
       store.setStageError(currentStage, "Unable to continue after checkpoint.");
       console.error("Failed to continue after checkpoint", error?.message ?? error);
     }
   }, [projectId]);
+
+  const handleAgentUpdates = useCallback(async (event: ProcessingEvent) => {
+    const store = useDesignStudioStore.getState();
+
+    if (event.type === "error") {
+      toast.error(event.message ?? "Unknown error");
+      console.error(`Error event received:`, event.message ?? event);
+      studioSocket.disconnect();
+    }
+
+    store.updateFromEvent(event);
+
+    if (event.type !== "update") {
+      store.setGlobalState({
+        isProcessing: false,
+      });
+      studioSocket.disconnect();
+    }
+  }, []);
+
 
   const reloadSessions = useCallback(async () => {
     if (!projectId) {
@@ -200,6 +226,7 @@ export function useDesignStudioViewModel(projectId: string): DesignStudioViewMod
         }
       }
     } catch (error: any) {
+      toast.error("Failed to load sessions");
       console.error("Failed to load sessions", error?.message ?? error);
     }
   }, [projectId]);
@@ -219,6 +246,7 @@ export function useDesignStudioViewModel(projectId: string): DesignStudioViewMod
         await store.setSessionData(session);
       }
     } catch (error: any) {
+      toast.error("Failed to load session data");
       console.error("Failed to load session data", error?.message ?? error);
     }
   }, [projectId]);

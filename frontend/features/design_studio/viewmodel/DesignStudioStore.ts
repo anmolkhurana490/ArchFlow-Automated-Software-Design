@@ -302,17 +302,18 @@ export const useDesignStudioStore = create<DesignStudioStoreState>((set, get) =>
       return;
     }
 
-    if (event.type === "error") {
-      store.setStageError(event.stage, "Stage execution failed.");
-      store.setGlobalState({
-        isProcessing: false,
-        liveStage: null,
-        liveActivity: null,
-        progress: updateStageStatus(store.global.progress, event, "error"),
-      });
+    // Currently treating "error" events as global - can be enhanced to set stage-specific errors if needed
+    // if (event.type === "error") {
+    //   store.setStageError(event.stage, "Stage execution failed.");
+    //   store.setGlobalState({
+    //     isProcessing: false,
+    //     liveStage: null,
+    //     liveActivity: null,
+    //     progress: updateStageStatus(store.global.progress, event, "error"),
+    //   });
 
-      return;
-    }
+    //   return;
+    // }
 
     if (event.type === "end") {
       store.setGlobalState({

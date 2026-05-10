@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { getUserProjects, createProject as apiCreate, updateProject as apiUpdate, deleteProject as apiDelete } from "@/features/projects/repositories";
 import type { Project, ProjectModalPayload } from "../model/types";
+import { toast } from "sonner";
 
 export function useProjectViewModel() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -14,6 +15,7 @@ export function useProjectViewModel() {
       const res = await getUserProjects(100, 0);
       setProjects(res.projects || []);
     } catch (e) {
+      toast.error("Failed to load projects");
       console.error(e);
     } finally {
       setLoading(false);
@@ -33,6 +35,7 @@ export function useProjectViewModel() {
       return created;
     }
     catch (e) {
+      toast.error("Failed to create project");
       console.error(e);
       setLoading(false);
       return null;
@@ -48,6 +51,7 @@ export function useProjectViewModel() {
       return updated;
     }
     catch (e) {
+      toast.error("Failed to update project");
       console.error(e);
       setLoading(false);
       return null;
@@ -62,6 +66,7 @@ export function useProjectViewModel() {
       setLoading(false);
     }
     catch (e) {
+      toast.error("Failed to delete project");
       console.error(e);
       setLoading(false);
     }

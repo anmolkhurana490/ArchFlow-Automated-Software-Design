@@ -50,6 +50,7 @@ export interface GlobalDesignState {
 export interface ProcessingEvent {
   type: "update" | "checkpoint" | "complete" | "error" | "end";
   data?: StageOutputMap[ProcessingStage];
+  message?: string;
   stage: ProcessingStage;
   node: string;
 }

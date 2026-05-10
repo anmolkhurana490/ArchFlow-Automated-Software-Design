@@ -3,6 +3,7 @@ import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { SiteNavbar } from "@/shared/components/SiteNavbar";
 import { SiteFooter } from "@/shared/components/SiteFooter";
+import { Toaster } from "sonner";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -37,6 +38,7 @@ export default function RootLayout({
           {children}
         </div>
 
+        <Toaster position="bottom-right" theme="dark" richColors />
         <SiteFooter />
       </body>
     </html >
