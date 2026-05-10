@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 import { Project } from "../../model/types";
-import { Edit2, Trash2, Check, X } from "lucide-react";
+import { Edit2, Trash2 } from "lucide-react";
 
 interface ProjectCardProps {
   p: Project;

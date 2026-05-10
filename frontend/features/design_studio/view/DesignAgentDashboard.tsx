@@ -6,7 +6,6 @@ import { useDesignStudioStore } from "../viewmodel/DesignStudioStore";
 import { useShallow } from "zustand/react/shallow";
 import type { ProcessingStage, StageStatus } from "../model/types";
 import { StageSidebar } from "./components/StageSidebar";
-import { PreviousStagePanel } from "./components/PreviousStagePanel";
 import { StarterStagePanel } from "./components/stages/StarterStagePanel";
 import { ElicitationStagePanel } from "./components/stages/ElicitationStagePanel";
 import { PlanningStagePanel } from "./components/stages/PlanningStagePanel";
@@ -31,10 +30,9 @@ export function DesignAgentDashboard() {
   const params = useParams();
   const projectId = params.id as string;
 
-  const { progress, userInput, activeStage, isProcessing, sessions, currentSessionId } = useDesignStudioStore(
+  const { progress, activeStage, isProcessing, sessions, currentSessionId } = useDesignStudioStore(
     useShallow((state) => ({
       progress: state.global.progress,
-      userInput: state.global.userInput,
       activeStage: state.global.activeStage,
       isProcessing: state.global.isProcessing,
       sessions: state.sessions,
@@ -48,17 +46,31 @@ export function DesignAgentDashboard() {
     reset
   } = useDesignStudioViewModel(projectId);
 
+  const [selectedStage, setSelectedStage] = useState<ProcessingStage | null>(null);
+  const [loadingSessionId, setLoadingSessionId] = useState<string | null>(null);
+  const [isInitializing, setIsInitializing] = useState<boolean>(true);
+
   useEffect(() => {
-    if (!projectId) return;
-    initializeProject();
+    const loadProject = async () => {
+      if (!projectId) {
+        setIsInitializing(false);
+        return;
+      }
+
+      setIsInitializing(true);
+      try {
+        await initializeProject();
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    loadProject();
 
     return () => {
       reset();
     };
   }, [projectId, reset]);
-
-  const [selectedStage, setSelectedStage] = useState<ProcessingStage | null>(null);
-  const [loadingSessionId, setLoadingSessionId] = useState<string | null>(null);
 
   const handleSelectSession = async (sessionId: string) => {
     setLoadingSessionId(sessionId);
@@ -89,11 +101,11 @@ export function DesignAgentDashboard() {
 
   const focusedStage = isProcessing ? activeStage : selectedStage;
 
-  const focusedStageIndex = getStageIndex(focusedStage);
-  const previousStage = focusedStageIndex > 0 ? stageOrder[focusedStageIndex - 1] : null;
-  const nextStage = focusedStageIndex >= 0 && focusedStageIndex < stageOrder.length - 1
-    ? stageOrder[focusedStageIndex + 1]
-    : null;
+  // const focusedStageIndex = getStageIndex(focusedStage);
+  // const previousStage = focusedStageIndex > 0 ? stageOrder[focusedStageIndex - 1] : null;
+  // const nextStage = focusedStageIndex >= 0 && focusedStageIndex < stageOrder.length - 1
+  //   ? stageOrder[focusedStageIndex + 1]
+  //   : null;
 
   const goToStage = (stage: ProcessingStage | null) => {
     if (!stage) return;
@@ -246,7 +258,7 @@ export function DesignAgentDashboard() {
           </div>
 
           <div className="transition-all duration-500 ease-out">
-            {loadingSessionId ? (
+            {isInitializing || loadingSessionId ? (
               <div className="min-h-96 flex items-center justify-center">
                 <Spinner size="md" label="Loading session..." />
               </div>

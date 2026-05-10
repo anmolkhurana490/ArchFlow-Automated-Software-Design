@@ -1,18 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useDesignStudioViewModel } from "@/features/design_studio/viewmodel/DesignStudioViewModel";
 import { useDesignStudioStore } from "@/features/design_studio/viewmodel/DesignStudioStore";
 import { useShallow } from "zustand/react/shallow";
 import { StagePanelFrame } from "./StagePanelFrame";
 import { useParams } from "next/navigation";
+import Spinner from "@/shared/components/Spinner";
+import { useState } from "react";
 
 
 function StarterStageContent() {
   const params = useParams();
   const projectId = params.id as string;
 
-  const { userInput, setUserInput, isProcessing, reset, sessions } = useDesignStudioStore(
+  const { userInput, setUserInput, isProcessing, sessions } = useDesignStudioStore(
     useShallow((state) => ({
       userInput: state.global.userInput,
       setUserInput: state.setUserInput,
@@ -22,12 +23,17 @@ function StarterStageContent() {
     })),
   );
 
+  const [submitting, setSubmitting] = useState(false);
+
   const {
     runProcessing
   } = useDesignStudioViewModel(projectId);
 
   const handleRun = async () => {
+    if (isProcessing || submitting || !userInput.trim()) return;
+    setSubmitting(true);
     await runProcessing();
+    setSubmitting(false);
   };
 
   return (
@@ -65,6 +71,8 @@ function StarterStageContent() {
         >
           Reset
         </button>
+
+        {submitting && <Spinner />}
       </div>
     </div>
   );

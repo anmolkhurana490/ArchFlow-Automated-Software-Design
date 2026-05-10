@@ -6,31 +6,26 @@ import { NativeSocket, baseWsUrl } from "../../lib/socket";
 
 // Backend endpoints (matching /modules/studio/routes.py)
 export async function startStudio(projectId: string, userInput: string) {
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
   const res = await apiClient.post(`/studio/${projectId}/start`, { user_input: userInput });
   return res.data?.data ?? res.data ?? res;
 }
 
 export async function getProjectSessions(projectId: string) {
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
   const res = await apiClient.get(`/studio/${projectId}`);
   return res.data?.data ?? res.data ?? res;
 }
 
 export async function getSession(projectId: string, sessionId: string) {
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
   const res = await apiClient.get(`/studio/${projectId}/session/${sessionId}`);
   return res.data?.data ?? res.data ?? res;
 }
 
 export async function checkpointStudio(projectId: string, sessionId: string, responseData: ResponseData) {
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
   const res = await apiClient.post(`/studio/${projectId}/checkpoint/${sessionId}`, responseData);
   return res.data ?? res;
 }
 
 export async function exportOutputReportFile(projectId: string, sessionId: string, format: "md" | "pdf") {
-  await new Promise(resolve => setTimeout(resolve, 1000));
   const res = await apiClient.get(`/studio/${projectId}/export/${sessionId}/${format}`, { responseType: "blob" });
   return res.data ?? res;
 }

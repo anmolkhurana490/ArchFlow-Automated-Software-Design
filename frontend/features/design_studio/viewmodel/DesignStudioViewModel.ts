@@ -38,8 +38,6 @@ export function useDesignStudioViewModel(projectId: string): DesignStudioViewMod
 
     store.setGlobalState({
       isProcessing: true,
-      liveStage: "elicitation",
-      liveActivity: { stage: "elicitation", message: "Starting design studio pipeline." },
     });
 
     studioSocket.onOpen = () => console.log("WebSocket connection established.");

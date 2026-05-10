@@ -7,6 +7,7 @@ import type { StageStatus } from "../../../model/types";
 import { StagePanelFrame } from "./StagePanelFrame";
 import Markdown from "react-markdown";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 
 interface FinalOutputStagePanelProps {
   status: StageStatus;
@@ -26,6 +27,29 @@ function FinalOutputStageContent() {
   const {
     exportMarkdown, exportPDF
   } = useDesignStudioViewModel(projectId);
+  
+  const [exportingMarkdown, setExportingMarkdown] = useState(false);
+  const [exportingPDF, setExportingPDF] = useState(false);
+
+  const handleExportMarkdown = async () => {
+    if (exportingMarkdown || exportingPDF) return;
+    setExportingMarkdown(true);
+    try {
+      await exportMarkdown();
+    } finally {
+      setExportingMarkdown(false);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    if (exportingMarkdown || exportingPDF) return;
+    setExportingPDF(true);
+    try {
+      await exportPDF();
+    } finally {
+      setExportingPDF(false);
+    }
+  };
 
   if (!finalOutput) {
     return (
@@ -38,16 +62,20 @@ function FinalOutputStageContent() {
       {finalOutput && <div className="flex items-center justify-end gap-2">
         <button
           type="button"
-          onClick={exportMarkdown}
-          className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1 text-sm font-medium text-slate-200 hover:border-cyan-400"
+          onClick={handleExportMarkdown}
+          disabled={exportingMarkdown || exportingPDF}
+          className="inline-flex items-center gap-2 rounded-md border border-slate-600 bg-slate-800 px-3 py-1 text-sm font-medium text-slate-200 hover:border-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
         >
+          {exportingMarkdown ? <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-cyan-200 border-t-transparent" /> : null}
           Export Markdown
         </button>
         <button
           type="button"
-          onClick={exportPDF}
-          className="rounded-md border border-slate-600 bg-cyan-700 px-3 py-1 text-sm font-medium text-white hover:bg-cyan-600"
+          onClick={handleExportPDF}
+          disabled={exportingMarkdown || exportingPDF}
+          className="inline-flex items-center gap-2 rounded-md border border-slate-600 bg-cyan-700 px-3 py-1 text-sm font-medium text-white hover:bg-cyan-600 disabled:cursor-not-allowed disabled:opacity-60"
         >
+          {exportingPDF ? <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-cyan-100 border-t-transparent" /> : null}
           Export PDF
         </button>
       </div>}
