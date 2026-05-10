@@ -88,12 +88,16 @@ class StudioService:
 	async def handle_agent_updates(self, project_id: str, session_id: str, generator: AsyncGenerator):
 		async for update in generator:
 			# Store the update in the database
+			print(f"Received update for session {session_id}: {update}")
 
 			output = update.get("data", {})
 			stage = update.get("stage", "").lower()
 
 			if output is None or not stage:
+				print(f"Invalid update format for session {session_id}. Missing 'data' or 'stage'. stage: {stage}, output: {output}")
 				continue
+
+			print(f"Storing update for session {session_id} - Stage: {stage}")
 
 			updateData = StageUpdate(
 				stage=stage,
