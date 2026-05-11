@@ -19,7 +19,7 @@ function StarterStageContent() {
       setUserInput: state.setUserInput,
       isProcessing: state.global.isProcessing,
       reset: state.reset,
-      sessions: state.sessions,
+      sessions: state.projectData?.sessions ?? [],
     })),
   );
 
@@ -38,9 +38,6 @@ function StarterStageContent() {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-slate-300">
-        This starter panel controls execution and keeps prompt input isolated from stage outputs.
-      </p>
       <div>
         <label htmlFor="design-prompt" className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">
           User Input

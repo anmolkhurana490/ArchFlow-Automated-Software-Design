@@ -6,6 +6,13 @@ import { ArchitectureOutputType, TechStackOutputType, PlanningStageStateType } f
 import type { DecisionOptimizationSchema, ScoringReport, ValidationStageState } from "./validation_stage_models";
 import { ValidationStageOutputType } from "./validation_stage_models";
 
+export interface ProjectData {
+  id: string;
+  name: string;
+  description?: string;
+  sessions: string[];
+}
+
 export type ProcessingStage =
   | "elicitation"
   | "planning"
@@ -100,12 +107,12 @@ export interface DesignStudioStoreState {
   design: DesignStageState;
   validation: ValidationStageState;
   output: OutputStageState;
-  sessions: string[];
+  projectData: ProjectData | null;
   currentSessionId: string | null;
 
+  setProjectData: (data: ProjectData) => void;
   setGlobalState: (newState: Partial<GlobalState>) => void;
   setUserInput: (input: string) => void;
-  setSessions: (sessions: string[]) => void;
   setCurrentSessionId: (sessionId: string | null) => void;
   setElicitationOutput: (output: ElicitationStageState | null) => void;
   setPlanningOutput: (output: PlanningStageState | null) => void;
@@ -130,7 +137,7 @@ export interface DesignStudioViewModel {
   reset: () => void;
   resetSession: () => void;
 
-  sessions: string[];
+  projectData: ProjectData | null;
   currentSessionId: string | null;
   selectSession: (sessionId: string | null) => Promise<void>;
   reloadSessions: () => Promise<void>;

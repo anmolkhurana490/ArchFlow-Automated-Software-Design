@@ -165,8 +165,10 @@ const checkpointHandlers: Partial<Record<ProcessingStage, (store: DesignStudioSt
 
 export const useDesignStudioStore = create<DesignStudioStoreState>((set, get) => ({
   ...INITIAL_STATE,
-  sessions: [],
+  projectData: null,
   currentSessionId: null,
+
+  setProjectData: (newData) => set(() => ({ projectData: newData })),
 
   setGlobalState: (newState) => {
     set((prev) => ({
@@ -181,9 +183,6 @@ export const useDesignStudioStore = create<DesignStudioStoreState>((set, get) =>
     get().setGlobalState({ userInput: input });
   },
 
-  setSessions: (sessions) => {
-    set(() => ({ sessions }));
-  },
 
   setCurrentSessionId: (sessionId) => {
     set(() => ({ currentSessionId: sessionId }));

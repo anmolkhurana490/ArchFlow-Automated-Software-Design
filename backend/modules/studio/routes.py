@@ -3,6 +3,7 @@ from fastapi.responses import StreamingResponse
 from modules.studio.types import AgentStartData, UserCheckpointData, ExportFormat
 from modules.projects.dependencies import validate_project
 from modules.studio.services import StudioService
+from modules.projects.models import ProjectOutput
 
 router = APIRouter(
   dependencies=[Depends(validate_project)]
@@ -19,9 +20,16 @@ async def get_session(session_id: str):
 
 # Get the all session Ids (of agent execution) for a given project ID
 @router.get("/{project_id}")
-async def get_studio(project_id: str):
+async def get_studio(
+  project_id: str,
+  projectData: ProjectOutput = Depends(validate_project)
+):
   sessionsList = await studio_service.get_project_studio(project_id)
-  return {"status": "success", "data": sessionsList}
+  data = {
+    **projectData.model_dump(),
+    "sessions": sessionsList
+  }
+  return {"status": "success", "data": data}
 
 
 # Start the agent execution for a given project ID

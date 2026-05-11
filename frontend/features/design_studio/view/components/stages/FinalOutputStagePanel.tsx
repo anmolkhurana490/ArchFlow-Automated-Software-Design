@@ -27,7 +27,7 @@ function FinalOutputStageContent() {
   const {
     exportMarkdown, exportPDF
   } = useDesignStudioViewModel(projectId);
-  
+
   const [exportingMarkdown, setExportingMarkdown] = useState(false);
   const [exportingPDF, setExportingPDF] = useState(false);
 
@@ -81,12 +81,12 @@ function FinalOutputStageContent() {
       </div>}
 
       {validation?.final_score && <p className="text-sm text-slate-300">
-        Final output compiled after validation confidence {Math.round(validation.final_score * 100)}/100.
+        Final output compiled with Scoring {Math.round(validation.final_score * 100)}/100.
       </p>}
 
       {/* <pre className="whitespace-pre-wrap rounded-xl border border-white/10 bg-black/20 p-4 text-sm text-slate-100">
       </pre> */}
-      <div className="prose prose-sm prose-invert prose-h2:border-b prose-h2:border-gray-500 max-w-none">
+      <div className="prose prose-sm prose-invert prose-h2:border-b prose-h2:border-gray-500 wrap-break-word">
         <Markdown>
           {finalOutput.final_output_report}
         </Markdown>

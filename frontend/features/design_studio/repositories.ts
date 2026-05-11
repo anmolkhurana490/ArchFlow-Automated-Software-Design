@@ -10,7 +10,7 @@ export async function startStudio(projectId: string, userInput: string) {
   return res.data?.data ?? res.data ?? res;
 }
 
-export async function getProjectSessions(projectId: string) {
+export async function getProjectWithSessions(projectId: string) {
   const res = await apiClient.get(`/studio/${projectId}`);
   return res.data?.data ?? res.data ?? res;
 }

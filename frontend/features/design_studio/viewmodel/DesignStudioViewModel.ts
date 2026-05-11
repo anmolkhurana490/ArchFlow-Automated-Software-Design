@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import type { DesignStudioViewModel, ProcessingEvent } from "../model/types";
+import type { DesignStudioViewModel, ProcessingEvent, ProjectData } from "../model/types";
 import { useDesignStudioStore } from "./DesignStudioStore";
-import { checkpointStudio, exportOutputReportFile, getProjectSessions, getSession, startStudio, studioSocket } from "../repositories";
+import { checkpointStudio, exportOutputReportFile, getProjectWithSessions, getSession, startStudio, studioSocket } from "../repositories";
 import { toast } from "sonner";
 
 export function useDesignStudioViewModel(projectId: string): DesignStudioViewModel {
@@ -12,9 +12,10 @@ export function useDesignStudioViewModel(projectId: string): DesignStudioViewMod
     store.reset();
 
     try {
-      const sessions: string[] = await getProjectSessions(projectId);
-      store.setSessions(sessions);
+      const data: ProjectData = await getProjectWithSessions(projectId);
+      store.setProjectData(data);
 
+      const sessions = data.sessions ?? [];
       const lastSessionId = sessions.at(-1) ?? null;
       if (!lastSessionId) return;
 
@@ -33,8 +34,9 @@ export function useDesignStudioViewModel(projectId: string): DesignStudioViewMod
   const runProcessing = useCallback(async () => {
     const store = useDesignStudioStore.getState();
     const userInput = store.global.userInput;
+    const projectData = store.projectData;
 
-    if (!projectId || !userInput || store.global.isProcessing) {
+    if (!projectData || !userInput || store.global.isProcessing) {
       return;
     }
 
@@ -57,13 +59,14 @@ export function useDesignStudioViewModel(projectId: string): DesignStudioViewMod
       await studioSocket.connect(projectId);
 
       const data = await startStudio(projectId, userInput);
-      const sessionId = data?.session_id ?? data ?? null;
+      const sessionId: string = data?.session_id ?? data ?? null;
 
       resetSession();
 
       if (sessionId) {
-        const sessions = useDesignStudioStore.getState().sessions;
-        useDesignStudioStore.getState().setSessions(sessions.includes(sessionId) ? sessions : [...sessions, sessionId]);
+        const sessions = projectData?.sessions ?? [];
+        const newSessions = sessions.includes(sessionId) ? sessions : [...sessions, sessionId];
+        useDesignStudioStore.getState().setProjectData({ ...projectData, sessions: newSessions });
         useDesignStudioStore.getState().setCurrentSessionId(sessionId);
       }
 
@@ -213,9 +216,10 @@ export function useDesignStudioViewModel(projectId: string): DesignStudioViewMod
 
     try {
       const store = useDesignStudioStore.getState();
-      const sessions: string[] = await getProjectSessions(projectId);
-      store.setSessions(sessions);
+      const data: ProjectData = await getProjectWithSessions(projectId);
+      store.setProjectData(data);
 
+      const sessions = data.sessions ?? [];
       const lastSessionId = sessions.at(-1) ?? null;
       store.setCurrentSessionId(lastSessionId);
 
@@ -290,7 +294,7 @@ export function useDesignStudioViewModel(projectId: string): DesignStudioViewMod
     runProcessing,
     continueAfterCheckpoint,
     reset, resetSession,
-    sessions: useDesignStudioStore.getState().sessions,
+    projectData: useDesignStudioStore.getState().projectData,
     currentSessionId: useDesignStudioStore.getState().currentSessionId,
     selectSession,
     reloadSessions,

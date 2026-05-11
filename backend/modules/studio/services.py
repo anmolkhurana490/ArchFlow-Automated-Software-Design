@@ -96,7 +96,7 @@ class StudioService:
 			output = update.get("data", {}) 
 			stage = update.get("stage", "").lower()
 
-			if type is "error" or type is "end":
+			if type == "error" or type == "end":
 				await self.ws_manager.broadcast_data(project_id, update)
 				continue
 

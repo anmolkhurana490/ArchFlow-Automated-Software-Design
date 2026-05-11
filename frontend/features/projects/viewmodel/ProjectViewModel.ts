@@ -31,6 +31,7 @@ export function useProjectViewModel() {
     try {
       const created = await apiCreate(payload);
       setProjects((p) => [created, ...p]);
+      toast.success("Project created successfully");
       setLoading(false);
       return created;
     }
@@ -47,6 +48,7 @@ export function useProjectViewModel() {
     try {
       const updated = await apiUpdate(id, payload);
       setProjects((p) => p.map((x) => (x.id === id ? updated : x)));
+      toast.success("Project updated successfully");
       setLoading(false);
       return updated;
     }
@@ -63,6 +65,7 @@ export function useProjectViewModel() {
     try {
       await apiDelete(id);
       setProjects((p) => p.filter((x) => x.id !== id));
+      toast.success("Project deleted successfully");
       setLoading(false);
     }
     catch (e) {

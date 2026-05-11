@@ -51,6 +51,7 @@ export function StagePanelFrame({
           : "border-slate-700",
       ].join(" ")}
       aria-live={isLive ? "polite" : "off"}
+      style={{ wordBreak: "break-word" }}
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>

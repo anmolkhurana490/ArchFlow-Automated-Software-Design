@@ -19,6 +19,8 @@ class ProjectService:
     
     if project.user_id != user_id:
       raise BadRequestException("Unauthorized access to this project")
+    
+    return project
 
   # ============ Get Single Project ============
   async def get_project_data(self, project_id: str):

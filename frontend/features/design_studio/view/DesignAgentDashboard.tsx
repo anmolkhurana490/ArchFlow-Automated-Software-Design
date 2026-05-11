@@ -14,6 +14,7 @@ import { ValidationStagePanel } from "./components/stages/ValidationStagePanel";
 import { FinalOutputStagePanel } from "./components/stages/FinalOutputStagePanel";
 import { useParams } from "next/navigation";
 import Spinner from "@/shared/components/Spinner";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 const stageOrder: ProcessingStage[] = ["elicitation", "planning", "design", "validation", "output"];
 
@@ -30,13 +31,13 @@ export function DesignAgentDashboard() {
   const params = useParams();
   const projectId = params.id as string;
 
-  const { progress, activeStage, isProcessing, sessions, currentSessionId } = useDesignStudioStore(
+  const { progress, activeStage, isProcessing, currentSessionId, projectData } = useDesignStudioStore(
     useShallow((state) => ({
       progress: state.global.progress,
       activeStage: state.global.activeStage,
       isProcessing: state.global.isProcessing,
-      sessions: state.sessions,
       currentSessionId: state.currentSessionId,
+      projectData: state.projectData,
     })),
   );
 
@@ -49,6 +50,7 @@ export function DesignAgentDashboard() {
   const [selectedStage, setSelectedStage] = useState<ProcessingStage | null>(null);
   const [loadingSessionId, setLoadingSessionId] = useState<string | null>(null);
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
+  const [showProjectDetails, setShowProjectDetails] = useState<boolean>(false);
 
   useEffect(() => {
     const loadProject = async () => {
@@ -194,27 +196,47 @@ export function DesignAgentDashboard() {
         />
 
         <section className="space-y-4">
-          <div className="flex items-center justify-between rounded-2xl border border-slate-700 bg-slate-900/60 px-4 py-3">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-300">
-              {isProcessing ? "Execution Mode" : "Exploration Mode"}
-            </p>
-            <span
-              className={[
-                "rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em]",
-                isProcessing
-                  ? "border-cyan-400/50 bg-cyan-500/15 text-cyan-100 animate-pulse"
-                  : "border-slate-600 bg-slate-800 text-slate-300",
-              ].join(" ")}
-            >
-              {isProcessing ? "Live" : "Static"}
-            </span>
+          <div className="rounded-2xl border border-slate-700 bg-slate-950/70 p-3 sm:p-4 shadow-sm shadow-slate-950/30">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              {projectData && <div className="min-w-0">
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">
+                  Project
+                </p>
+                <h1 className="mt-1 truncate text-xl font-black text-slate-50 sm:text-2xl">
+                  {projectData?.name ?? "Untitled Project"}
+                </h1>
+                <div
+                  className={[
+                    "overflow-hidden transition-all duration-300 ease-out",
+                    showProjectDetails ? "mt-2 max-h-32 opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1",
+                  ].join(" ")}
+                >
+                  <p className="max-w-3xl text-sm leading-6 text-slate-400">
+                    {projectData?.description?.trim() || "No description added for this project."}
+                  </p>
+                </div>
+              </div>}
+
+              <div className="flex shrink-0 sm:flex-col items-start gap-2 sm:items-end justify-between">
+                <div className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-300">
+                  {isProcessing ? "Live session" : "Studio overview"}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowProjectDetails((current) => !current)}
+                  className="text-[10px] font-bold uppercase tracking-[0.16em] text-cyan-300 transition-all duration-300 ease-out hover:text-cyan-200 hover:-translate-y-px"
+                >
+                  {showProjectDetails ? <ChevronUp /> : <ChevronDown />}
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Sessions pagination and controls */}
           <div className="flex max-md:flex-col md:items-center justify-between gap-4">
             <div className="flex flex-wrap items-center gap-2">
-              {sessions?.length ? (
-                sessions.map((s: string, idx: number) => (
+              {projectData?.sessions?.length ? (
+                projectData?.sessions.map((s: string, idx: number) => (
                   <button
                     key={s}
                     className={[
