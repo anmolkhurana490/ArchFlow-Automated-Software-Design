@@ -7,11 +7,11 @@ import type {
   ProcessingStage,
   StageProgressItem,
   StageStatus,
-} from "../model/types";
-import { ElicitationStageState, Question } from "../model/elicitation_stage_models";
-import { PlanningStageState } from "../model/planning_stage_models";
-import { DesignStageState } from "../model/design_stage_models";
-import { ValidationStageState } from "../model/validation_stage_models";
+} from "../../features/design_studio/model/types";
+import { ElicitationStageState, Question } from "../../features/design_studio/model/elicitation_stage_models";
+import { PlanningStageState } from "../../features/design_studio/model/planning_stage_models";
+import { DesignStageState } from "../../features/design_studio/model/design_stage_models";
+import { ValidationStageState } from "../../features/design_studio/model/validation_stage_models";
 
 const STAGES: ProcessingStage[] = ["elicitation", "planning", "design", "validation", "output"];
 

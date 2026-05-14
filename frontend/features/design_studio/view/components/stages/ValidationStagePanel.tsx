@@ -1,7 +1,7 @@
 "use client";
 
 import { useDesignStudioViewModel } from "@/features/design_studio/viewmodel/DesignStudioViewModel";
-import { useDesignStudioStore } from "@/features/design_studio/viewmodel/DesignStudioStore";
+import { useDesignStudioStore } from "@/shared/stores/DesignStudioStore";
 import type { StageStatus } from "../../../model/types";
 import { StagePanelFrame } from "./StagePanelFrame";
 

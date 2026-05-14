@@ -8,7 +8,7 @@ import { useAuthViewModel } from "@/features/auth/viewmodel/AuthViewModel";
 
 const navItems = [
   { label: "Home", href: "/" },
-  { label: "Dashboard", href: "/projects" },
+  { label: "Projects", href: "/projects", protected: true },
 ];
 
 export function SiteNavbar() {
@@ -43,16 +43,18 @@ export function SiteNavbar() {
         </button>
 
         <ul className="hidden items-center gap-2 sm:flex sm:gap-3">
-          {navItems.map((item) => (
-            <li key={item.label}>
-              <Link
-                href={item.href}
-                className="rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-slate-300 transition hover:bg-cyan-500/20 hover:text-cyan-200"
-              >
-                {item.label}
-              </Link>
-            </li>
-          ))}
+          {navItems
+            .filter((item) => !item.protected || (item.protected && user))
+            .map((item) => (
+              <li key={item.label}>
+                <Link
+                  href={item.href}
+                  className="rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-slate-300 transition hover:bg-cyan-500/20 hover:text-cyan-200"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
 
           {/* Auth Section */}
           {user ? (
@@ -95,18 +97,20 @@ export function SiteNavbar() {
       {menuOpen && (
         <div className="border-t border-slate-800 bg-slate-950/95 px-4 py-3 sm:hidden">
           <ul className="flex flex-col gap-2">
-            {navItems.map((item) => (
-              <li key={item.label}>
-                <Link
-                  href={item.href}
-                  className="flex items-center justify-between rounded-xl border border-slate-700 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:border-cyan-400 hover:text-cyan-200"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  <span>{item.label}</span>
-                  <span className="text-xs uppercase tracking-[0.14em] text-slate-500">Go</span>
-                </Link>
-              </li>
-            ))}
+            {navItems
+              .filter((item) => !item.protected || (item.protected && user))
+              .map((item) => (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="flex items-center justify-between rounded-xl border border-slate-700 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:border-cyan-400 hover:text-cyan-200"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <span>{item.label}</span>
+                    <span className="text-xs uppercase tracking-[0.14em] text-slate-500">Go</span>
+                  </Link>
+                </li>
+              ))}
 
             {/* Mobile Auth */}
             <li className="border-t border-slate-700 pt-2 mt-2">

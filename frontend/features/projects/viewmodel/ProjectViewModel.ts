@@ -22,10 +22,6 @@ export function useProjectViewModel() {
     }
   };
 
-  useEffect(() => {
-    loadProjects();
-  }, []);
-
   const create = async (payload: ProjectModalPayload) => {
     setLoading(true);
     try {

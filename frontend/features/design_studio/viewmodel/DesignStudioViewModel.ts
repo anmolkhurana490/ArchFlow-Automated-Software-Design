@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect } from "react";
 import type { DesignStudioViewModel, ProcessingEvent, ProjectData } from "../model/types";
-import { useDesignStudioStore } from "./DesignStudioStore";
+import { useDesignStudioStore } from "../../../shared/stores/DesignStudioStore";
 import { checkpointStudio, exportOutputReportFile, getProjectWithSessions, getSession, startStudio, studioSocket } from "../repositories";
 import { toast } from "sonner";
 

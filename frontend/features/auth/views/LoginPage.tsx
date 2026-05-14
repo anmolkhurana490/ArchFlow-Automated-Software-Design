@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthViewModel } from "../viewmodel/AuthViewModel";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "../../../shared/stores/AuthStore";
 
 export function LoginPage() {
   const router = useRouter();
-  const { login, googleLogin, isSubmitting, authenticated } = useAuthViewModel();
+  const { login, googleLogin, isSubmitting } = useAuthViewModel();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -20,11 +22,6 @@ export function LoginPage() {
   const handleGoogleSignin = async () => {
     await googleLogin();
   };
-
-  if (authenticated) {
-    router.push("/projects");
-    return null;
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">

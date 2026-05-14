@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useDesignStudioStore } from "@/features/design_studio/viewmodel/DesignStudioStore";
+import { useDesignStudioStore } from "@/shared/stores/DesignStudioStore";
 import type { ProcessingStage, StageProgressItem } from "../../model/types";
 
 interface PreviousStagePanelProps {

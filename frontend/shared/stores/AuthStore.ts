@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { User } from "../models/types";
+import type { User } from "../../features/auth/models/types";
 
 type AuthState = {
   user: User | null;

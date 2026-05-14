@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useAuthStore } from "./authStore";
+import { useAuthStore } from "../../../shared/stores/AuthStore";
 import { signIn, signOut, getSession } from "next-auth/react";
 import { toast } from "sonner";
 import { signupAPI } from "../repositories";
@@ -23,7 +23,7 @@ export function useAuthViewModel() {
         clearSession();
       }
     } catch (error) {
-      console.error("Failed to fetch session:", error);
+      // console.error("Failed to fetch session:", error.message);
       clearSession();
     }
   }, [setSession, clearSession]);
